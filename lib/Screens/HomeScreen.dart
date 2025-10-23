@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ticksy/Controllers/HomeController.dart';
+import 'package:ticksy/Widgets/AddTicketWidget.dart';
 import 'package:ticksy/Widgets/TicketListWidget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -149,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          floatingActionButton: AddTicketWidget(),
         );
       },
     );

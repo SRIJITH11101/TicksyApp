@@ -5,6 +5,10 @@ import 'package:ticksy/Screens/ChatScreen.dart';
 class HomeController extends GetxController {
   String name = "Srijith";
 
+  TextEditingController newTicketNameController = TextEditingController();
+  TextEditingController newTicketDescriptionController =
+      TextEditingController();
+
   late List<Map<String, dynamic>> selectedList = allTickets;
   //TextScaler textScale = MediaQuery.of(context).textScaler;
   List<Map<String, dynamic>> getSelectedList(int idx) {
