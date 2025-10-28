@@ -132,20 +132,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(height: Get.height / 53.3),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: Get.width / 15),
-                      child: TabBarView(
-                        physics: NeverScrollableScrollPhysics(),
-                        children: <Widget>[
-                          TicketListWidget(), // All
-                          TicketListWidget(), // New
-                          TicketListWidget(), // On Going
-                          TicketListWidget(),
-                        ],
-                      ),
-                    ),
-                  ),
+                  hmController.isTicketFetching
+                      ? Center(child: CircularProgressIndicator())
+                      : Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Get.width / 15,
+                            ),
+                            child: TabBarView(
+                              physics: NeverScrollableScrollPhysics(),
+                              children: <Widget>[
+                                TicketListWidget(), // All
+                                TicketListWidget(), // New
+                                TicketListWidget(), // On Going
+                                TicketListWidget(),
+                              ],
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),

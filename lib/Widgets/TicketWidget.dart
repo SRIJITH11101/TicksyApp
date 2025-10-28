@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ticksy/Controllers/HomeController.dart';
+import 'package:ticksy/Models/Ticket.dart';
 
 class TicketWidget extends StatefulWidget {
-  // String ticketName;
-  // String ticketDescription;
-  // String ticketStatus;
-  // String ticketPriority;
-  // String ticketDepartment;
-
   final int ticketIdx;
 
   const TicketWidget({super.key, required this.ticketIdx});
@@ -19,25 +14,25 @@ class TicketWidget extends StatefulWidget {
 }
 
 class _TicketWidgetState extends State<TicketWidget> {
-  HomeController hmController = Get.find<HomeController>();
+  final HomeController hmController = Get.find<HomeController>();
+
   @override
   Widget build(BuildContext context) {
+    final Ticket ticket = hmController.selectedList[widget.ticketIdx];
+
     return InkWell(
       onTap: () {
-        // Handle ticket tap
-        hmController.setselectedTicketId(
-          hmController.selectedList[widget.ticketIdx]["ticketId"],
-        );
+        hmController.setSelectedTicketId(ticket.id!);
+        hmController.update();
       },
       child: Row(
         children: [
           Container(
             height: Get.height / 6.29,
             width: Get.width / 22.5,
-
             decoration: BoxDecoration(
               color: hmController.getStatusColor(widget.ticketIdx),
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(10),
                 bottomLeft: Radius.circular(10),
               ),
@@ -46,8 +41,7 @@ class _TicketWidgetState extends State<TicketWidget> {
           Expanded(
             child: Container(
               height: Get.height / 6.29,
-              //width: Get.width / 1.14,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(10),
@@ -64,8 +58,7 @@ class _TicketWidgetState extends State<TicketWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          hmController.selectedList[widget
-                              .ticketIdx]["ticketName"],
+                          ticket.subject ?? "",
                           style: GoogleFonts.alata(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
@@ -74,7 +67,7 @@ class _TicketWidgetState extends State<TicketWidget> {
                         ),
                         Image(
                           image: AssetImage(
-                            'assets/images/${hmController.selectedList[widget.ticketIdx]["ticketPriority"]}.png',
+                            'assets/images/${ticket.priority?.toLowerCase()}.png',
                           ),
                           height: Get.height / 32,
                           width: Get.width / 14.4,
@@ -82,12 +75,11 @@ class _TicketWidgetState extends State<TicketWidget> {
                       ],
                     ),
                     SizedBox(height: Get.height / 80),
-                    Container(
+                    SizedBox(
                       width: Get.width / 1.38,
                       height: Get.height / 20,
                       child: Text(
-                        hmController.selectedList[widget
-                            .ticketIdx]["ticketDescription"],
+                        ticket.description ?? "",
                         style: GoogleFonts.alata(
                           fontSize: 13,
                           fontWeight: FontWeight.w200,
@@ -97,12 +89,11 @@ class _TicketWidgetState extends State<TicketWidget> {
                     ),
                     SizedBox(height: Get.height / 160),
                     Text(
-                      hmController.selectedList[widget
-                          .ticketIdx]["ticketDepartment"],
+                      ticket.department ?? "",
                       style: GoogleFonts.alata(
                         fontSize: 10,
                         fontWeight: FontWeight.w200,
-                        color: Color(0xff1778F2),
+                        color: const Color(0xff1778F2),
                       ),
                     ),
                     Align(
@@ -110,10 +101,9 @@ class _TicketWidgetState extends State<TicketWidget> {
                       child: Column(
                         children: [
                           Text(
-                            hmController
-                                .selectedList[widget.ticketIdx]["creationTime"]
-                                .toString()
-                                .substring(0, 10),
+                            ticket.createdAt != null
+                                ? ticket.createdAt.toString().substring(0, 10)
+                                : "",
                             style: GoogleFonts.alata(
                               fontSize: 7,
                               fontWeight: FontWeight.w200,
@@ -121,10 +111,9 @@ class _TicketWidgetState extends State<TicketWidget> {
                             ),
                           ),
                           Text(
-                            hmController
-                                .selectedList[widget.ticketIdx]["creationTime"]
-                                .toString()
-                                .substring(11),
+                            ticket.createdAt != null
+                                ? ticket.createdAt.toString().substring(11, 19)
+                                : "",
                             style: GoogleFonts.alata(
                               fontSize: 7,
                               fontWeight: FontWeight.w200,

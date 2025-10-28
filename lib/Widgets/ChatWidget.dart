@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ticksy/Models/Message.dart';
 
 class ChatWidget extends StatefulWidget {
-  final Map<String, dynamic> chat;
+  final Message chat;
   const ChatWidget({super.key, required this.chat});
 
   @override
@@ -14,30 +15,34 @@ class _ChatWidgetState extends State<ChatWidget> {
   @override
   Widget build(BuildContext context) {
     final textScale = MediaQuery.of(context).textScaler;
+    final bool isUser = widget.chat.sentBy.toLowerCase() == "user";
+
     return Column(
-      crossAxisAlignment: widget.chat["sentBy"] == "User"
+      crossAxisAlignment: isUser
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: widget.chat["sentBy"] == "User"
+          mainAxisAlignment: isUser
               ? MainAxisAlignment.end
               : MainAxisAlignment.start,
           children: [
-            widget.chat["sentBy"] == "Agent"
+            // Left-side profile image for Agent
+            !isUser
                 ? Image.asset(
                     'assets/images/chatProfile.png',
                     height: 30,
                     width: 30,
                   )
-                : SizedBox(),
+                : const SizedBox(),
+
             Container(
               width: Get.width / 2.09,
               decoration: BoxDecoration(
-                color: widget.chat["sentBy"] == "User"
-                    ? Color(0xff56BB71)
-                    : Color(0xff4F555A),
+                color: isUser
+                    ? const Color(0xff56BB71)
+                    : const Color(0xff4F555A),
                 borderRadius: BorderRadius.circular(20.0),
               ),
               child: Padding(
@@ -49,9 +54,10 @@ class _ChatWidgetState extends State<ChatWidget> {
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.chat["message"],
+                      widget.chat.text,
                       style: GoogleFonts.alata(
                         fontSize: textScale.scale(12),
                         fontWeight: FontWeight.w400,
@@ -61,7 +67,9 @@ class _ChatWidgetState extends State<ChatWidget> {
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Text(
-                        widget.chat["creationTime"],
+                        widget.chat.createdAt != null
+                            ? _formatTime(widget.chat.createdAt!)
+                            : '',
                         style: GoogleFonts.alata(
                           fontSize: textScale.scale(10),
                           fontWeight: FontWeight.w400,
@@ -73,16 +81,25 @@ class _ChatWidgetState extends State<ChatWidget> {
                 ),
               ),
             ),
-            widget.chat["sentBy"] == "User"
+
+            // Right-side profile image for User
+            isUser
                 ? Image.asset(
                     'assets/images/chatProfile.png',
                     height: 30,
                     width: 30,
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         ),
       ],
     );
+  }
+
+  // ---------- Helper: Format timestamp ----------
+  String _formatTime(DateTime dateTime) {
+    final hours = dateTime.hour.toString().padLeft(2, '0');
+    final minutes = dateTime.minute.toString().padLeft(2, '0');
+    return "$hours:$minutes";
   }
 }

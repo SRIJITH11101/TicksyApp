@@ -122,10 +122,15 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                       SizedBox(width: Get.width / 72),
-                      Container(
-                        height: Get.height / 20,
-                        width: Get.width / 9,
-                        child: Image.asset('assets/images/send.png'),
+                      InkWell(
+                        onTap: () {
+                          chController.sendMessage();
+                        },
+                        child: Container(
+                          height: Get.height / 20,
+                          width: Get.width / 9,
+                          child: Image.asset('assets/images/send.png'),
+                        ),
                       ),
                     ],
                   ),

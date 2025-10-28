@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ticksy/APICalls/apirequests.dart';
+import 'package:ticksy/Models/AuthRes.dart';
 import 'package:ticksy/Models/SignUpReq.dart';
 import 'package:ticksy/Screens/HomeScreen.dart';
 
@@ -8,6 +10,7 @@ class SignupController extends GetxController {
   final api = ApiRequests();
   final signUpKey = GlobalKey<FormState>();
   final formPassKey = GlobalKey<FormState>();
+  final authStorage = GetStorage();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -26,7 +29,15 @@ class SignupController extends GetxController {
         password: passwordController.text,
       );
 
-      await api.signup(signupData);
+      AuthRes? res = await api.signup(signupData);
+      //AuthRes? res = await api.login(loginData);
+
+      if (res != null) {
+        authStorage.write('accessToken', res.accessToken);
+        authStorage.write('refreshToken', res.refreshToken);
+        authStorage.write('userId', res.userId);
+        authStorage.write('username', res.username);
+      }
 
       Get.snackbar(
         'Success',

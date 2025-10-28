@@ -144,14 +144,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      child: Text(
-                        'Log In',
-                        style: GoogleFonts.alata(
-                          fontSize: textScale.scale(18),
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: lgController.isLoggingIn
+                          ? CircularProgressIndicator()
+                          : Text(
+                              'Log In',
+                              style: GoogleFonts.alata(
+                                fontSize: textScale.scale(18),
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                   SizedBox(height: Get.height / 3.77),

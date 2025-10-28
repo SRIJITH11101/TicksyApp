@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ticksy/APICalls/ApiRequests.dart';
+import 'package:ticksy/Models/AuthRes.dart';
 import 'package:ticksy/Models/loginReq.dart';
 import 'package:ticksy/Screens/HomeScreen.dart';
 
@@ -10,6 +12,7 @@ class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final loginKey = GlobalKey<FormState>();
+  final authStorage = GetStorage();
   //final formPassKey = GlobalKey<FormState>();
   bool isLoggingIn = false;
 
@@ -59,8 +62,14 @@ class LoginController extends GetxController {
         password: passwordController.text,
       );
 
-      await api.login(loginData);
+      AuthRes? res = await api.login(loginData);
 
+      if (res != null) {
+        authStorage.write('accessToken', res.accessToken);
+        authStorage.write('refreshToken', res.refreshToken);
+        authStorage.write('userId', res.userId);
+        authStorage.write('username', res.username);
+      }
       // Handle response as needed
 
       Get.snackbar(

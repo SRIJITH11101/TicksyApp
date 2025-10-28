@@ -1,28 +1,34 @@
+import 'dart:convert';
+
+import 'package:ticksy/Models/AuthRes.dart';
+import 'package:ticksy/Models/Message.dart';
 import 'package:ticksy/Models/SignUpReq.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:ticksy/Models/Ticket.dart';
 import 'package:ticksy/Models/loginReq.dart';
 
 class ApiRequests {
-  final String baseUrl = 'http://192.168.1.4:8080';
+  final String baseUrl = 'http://172.18.162.144:8080';
 
-  Future<void> signup(SignUpReq request) async {
+  Future<AuthRes?> signup(SignUpReq request) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/auth/register'),
       headers: {'Content-Type': 'application/json'},
       body: request.toRawJson(),
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Signup successful');
-      print(response.body);
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      return AuthRes.fromJson(jsonResponse);
     } else {
-      print('Signup failed: ${response.statusCode}');
+      print('SignUp failed: ${response.statusCode}');
       print(response.body);
+      return null; // or throw an exception
     }
   }
 
-  Future<void> login(LoginReq request) async {
+  Future<AuthRes?> login(LoginReq request) async {
     // Implement login API call here
     final response = await http.post(
       Uri.parse('$baseUrl/api/auth/login'),
@@ -30,12 +36,58 @@ class ApiRequests {
       body: request.toRawJson(),
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Login successful');
-      print(response.body);
+    if (response.statusCode == 200) {
+      print('Login successful' + response.body);
+      final jsonResponse = jsonDecode(response.body);
+      return AuthRes.fromJson(jsonResponse);
     } else {
       print('Login failed: ${response.statusCode}');
       print(response.body);
+      return null; // or throw an exception
+    }
+  }
+
+  Future<List<Ticket>> fetchUserTickets(
+    String userId,
+    String accessToken,
+  ) async {
+    final url = Uri.parse('$baseUrl/api/tickets/user?userId=$userId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Ticket.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load tickets: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Message>> getMessagesByTicketId(
+    String ticketId,
+    String accessToken,
+  ) async {
+    final url = Uri.parse('$baseUrl/api/messages/fetch?ticketId=$ticketId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken', // add if required
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => Message.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load messages');
     }
   }
 }
