@@ -8,6 +8,7 @@ class Ticket {
   final String department;
   final String priority;
   final String status;
+  final bool isOpen;
   final String originalLang;
   final String translateLang;
   final DateTime createdAt;
@@ -22,6 +23,7 @@ class Ticket {
     required this.department,
     required this.priority,
     required this.status,
+    required this.isOpen,
     required this.originalLang,
     required this.translateLang,
     required this.createdAt,
@@ -38,6 +40,7 @@ class Ticket {
       department: json['department'],
       priority: json['priority'],
       status: json['status'],
+      isOpen: json['isOpen'],
       originalLang: json['originalLang'],
       translateLang: json['translateLang'],
       createdAt: DateTime.parse(json['createdAt']),
@@ -55,6 +58,7 @@ class Ticket {
       'department': department,
       'priority': priority,
       'status': status,
+      'isOpen': isOpen,
       'originalLang': originalLang,
       'translateLang': translateLang,
       'createdAt': createdAt.toIso8601String(),

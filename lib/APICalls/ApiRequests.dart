@@ -6,6 +6,7 @@ import 'package:ticksy/Models/SignUpReq.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:ticksy/Models/Ticket.dart';
+import 'package:ticksy/Models/TicketReq.dart';
 import 'package:ticksy/Models/loginReq.dart';
 
 class ApiRequests {
@@ -15,6 +16,7 @@ class ApiRequests {
     final response = await http.post(
       Uri.parse('$baseUrl/api/auth/register'),
       headers: {'Content-Type': 'application/json'},
+
       body: request.toRawJson(),
     );
 
@@ -88,6 +90,27 @@ class ApiRequests {
       return jsonList.map((json) => Message.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load messages');
+    }
+  }
+
+  Future<void> createTicket(TicketReq ticketReq, String accessToken) async {
+    // 🧩 Debug print to check your request data
+    print('🟢 Sending ticket request: ${ticketReq.toRawJson()}');
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/tickets/create'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: ticketReq.toRawJson(),
+    );
+
+    print('🔵 Response status: ${response.statusCode}');
+    print('🔵 Response body: ${response.body}');
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to create ticket: ${response.body}');
     }
   }
 }

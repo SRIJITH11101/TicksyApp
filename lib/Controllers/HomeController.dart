@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ticksy/APICalls/ApiRequests.dart';
 import 'package:ticksy/Models/Ticket.dart';
+import 'package:ticksy/Models/TicketReq.dart';
 import 'package:ticksy/Screens/ChatScreen.dart';
 
 class HomeController extends GetxController {
@@ -13,9 +14,17 @@ class HomeController extends GetxController {
   List<Ticket> selectedList = [];
   bool isTicketFetching = false;
 
+  TextEditingController newTicketNameController = TextEditingController();
+  TextEditingController newTicketDescriptionController =
+      TextEditingController();
+
   @override
   Future<void> onInit() async {
     super.onInit();
+    await loadTickets();
+  }
+
+  Future<void> loadTickets() async {
     isTicketFetching = true;
     update();
     name = authStorage.read('username');
@@ -23,16 +32,51 @@ class HomeController extends GetxController {
       authStorage.read('userId'),
       authStorage.read('accessToken'),
     );
-    selectedList = allTickets; // initially show all tickets
+    selectedList = allTickets;
     isTicketFetching = false;
     update();
   }
 
-  TextEditingController newTicketNameController = TextEditingController();
-  TextEditingController newTicketDescriptionController =
-      TextEditingController();
+  Future<void> reloadTickets() async {
+    await loadTickets();
+  }
 
-  // Filtering by status
+  // ✅ Create new ticket and refresh list
+  Future<void> createNewTicket() async {
+    final title = newTicketNameController.text.trim();
+    final desc = newTicketDescriptionController.text.trim();
+    final ticketReq = new TicketReq(
+      userId: authStorage.read('userId'),
+      subject: title,
+      description: desc,
+      originalLang: "en",
+      translateLang: "en",
+    );
+
+    if (title.isEmpty || desc.isEmpty) {
+      Get.snackbar("Error", "Please enter title and description");
+      return;
+    }
+
+    try {
+      await api.createTicket(ticketReq, authStorage.read('accessToken'));
+
+      // Clear text fields after successful creation
+      newTicketNameController.clear();
+      newTicketDescriptionController.clear();
+
+      // Refresh tickets
+      await reloadTickets();
+
+      Get.back(); // Close bottom sheet
+      Get.snackbar("Success", "Ticket created successfully");
+    } catch (e) {
+      print(e);
+      Get.snackbar("Error", "Failed to create ticket: $e");
+    }
+  }
+
+  // Filtering tickets by tab
   List<Ticket> getSelectedList(int idx) {
     switch (idx) {
       case 0:

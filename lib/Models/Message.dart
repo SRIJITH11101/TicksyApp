@@ -46,7 +46,6 @@ class Message {
       'ticketId': ticketId,
       'text': text,
       'originalLang': originalLang,
-      // 🔥 send back using backend key
       'translatedLang': translateLang,
       if (translatedText != null) 'translatedText': translatedText,
       'sentBy': sentBy,

@@ -16,6 +16,12 @@ class TicketWidget extends StatefulWidget {
 class _TicketWidgetState extends State<TicketWidget> {
   final HomeController hmController = Get.find<HomeController>();
 
+  String _getShortDescription(String text) {
+    List<String> words = text.split(' ');
+    if (words.length <= 15) return text;
+    return '${words.take(15).join(' ')}...';
+  }
+
   @override
   Widget build(BuildContext context) {
     final Ticket ticket = hmController.selectedList[widget.ticketIdx];
@@ -79,7 +85,7 @@ class _TicketWidgetState extends State<TicketWidget> {
                       width: Get.width / 1.38,
                       height: Get.height / 20,
                       child: Text(
-                        ticket.description ?? "",
+                        _getShortDescription(ticket.description ?? ""),
                         style: GoogleFonts.alata(
                           fontSize: 13,
                           fontWeight: FontWeight.w200,

@@ -61,7 +61,7 @@ class LoginController extends GetxController {
         email: emailController.text.trim(),
         password: passwordController.text,
       );
-
+      print(loginData.email + ".........." + loginData.password);
       AuthRes? res = await api.login(loginData);
 
       if (res != null) {

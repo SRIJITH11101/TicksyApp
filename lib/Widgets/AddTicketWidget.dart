@@ -115,7 +115,7 @@ class _AddTicketWidgetState extends State<AddTicketWidget> {
                         SizedBox(height: Get.height / 25.80),
                         Center(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () => hmController.createNewTicket(),
                             child: Container(
                               height: Get.height / 19.04,
                               width: Get.width / 3.49,
